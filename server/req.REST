@@ -1,0 +1,6 @@
+POST http://localhost:5500/api/item
+Content-Type: application/json
+
+{
+    "item": "This is second Todo item"
+}
