@@ -2,7 +2,8 @@ POST http://localhost:5500/api/item
 Content-Type: application/json
 
 {
-    "item": "This is third Todo item"
+    "item": "This is third Todo item",
+    "itemStatus": true
 }
 ###
 

@@ -8,7 +8,8 @@ const todoItemsModel = require('../models/todoItems');
 router.post('/api/item', async (req, res) => {
     try {
         const newItem = new todoItemsModel({
-            item: req.body.item
+            item: req.body.item,
+            itemStatus: req.body.itemStatus
         })
         //save item to database
         const saveItem = await newItem.save()
@@ -52,6 +53,19 @@ router.delete('/api/item/:id', async (req, res) => {
         res.json(error);
     }
 })
+
+// Delete All Items with itemStatus true
+router.delete('/api/items', async (req, res) => {
+    try {
+      const filter = { itemStatus: true };
+      const deleteResult = await todoItemsModel.deleteMany(filter);
+      res.status(200).json("All items with itemStatus true deleted");
+    } catch (error) {
+      res.json(error);
+    }
+  });
+
+
 
 //export router
 module.exports = router;

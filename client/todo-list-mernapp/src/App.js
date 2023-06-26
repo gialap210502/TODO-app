@@ -12,7 +12,7 @@ function App() {
   const addItem = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5500/api/item', { item: itemText })
+      const res = await axios.post('http://localhost:5500/api/item', { item: itemText, itemStatus: false })
       setListItems(prev => [...prev, res.data])
       setItemText('');
     } catch (error) {
@@ -57,17 +57,49 @@ function App() {
   //update function
   const updateItem = async (e) => {
     e.preventDefault()
-    try{
-      const res = await axios.put(`http://localhost:5500/api/item/${isUpdating}`, {item: updateItemText})
+    try {
+      const res = await axios.put(`http://localhost:5500/api/item/${isUpdating}`, { item: updateItemText })
       console.log(res.data)
       const updatedItemIndex = listItems.findIndex(item => item._id === isUpdating);
       const updatedItem = listItems[updatedItemIndex].item = updateItemText;
       setUpdateItemText('');
       setIsUpdating('');
-    }catch(err){
+    } catch (err) {
       console.log(err);
     }
   }
+
+  const handleItemStatusChange = async (itemId, newStatus) => {
+    try {
+      const res = await axios.put(`http://localhost:5500/api/item/${itemId}`, { itemStatus: newStatus });
+      // Cập nhật danh sách mục
+      const updatedListItems = listItems.map(item => {
+        if (item._id === itemId) {
+          return { ...item, itemStatus: newStatus };
+        }
+        return item;
+      });
+      setListItems(updatedListItems);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const deleteAllItemsWithStatus = async () => {
+    try {
+      const res = await axios.delete('http://localhost:5500/api/items', {
+        params: {
+          itemStatus: true
+        }
+      });
+      // Cập nhật danh sách mục
+      const updatedListItems = listItems.filter(item => !item.itemStatus);
+      setListItems(updatedListItems);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  
 
 
   return (
@@ -77,15 +109,21 @@ function App() {
         <input type="text" placeholder="Add Todo Items" onChange={e => { setItemText(e.target.value) }} value={itemText} />
         <button type="submit">Add</button>
       </form>
+      <button className="deleteAllItems" onClick={deleteAllItemsWithStatus}>Delete Completed Items</button>
       <div className="todo-listItems">
         {
           listItems.map(item => (
             <div className="todo-item">
               {
                 isUpdating === item._id
-                  ? renderUpdateForm()
+                  ? renderUpdateForm(item)
                   : <>
                     <p className="item-Content">{item.item}</p>
+                    <input
+                      type="checkbox"
+                      checked={item.itemStatus}
+                      onChange={() => handleItemStatusChange(item._id, !item.itemStatus)}
+                    />
                     <button className="updateItem" onClick={() => { setIsUpdating(item._id) }}>Update</button>
                     <button className="deleteItem" onClick={() => { deleteItem(item._id) }}>Delete</button>
                   </>
