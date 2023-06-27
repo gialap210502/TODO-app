@@ -2,7 +2,8 @@ POST http://localhost:5500/api/item
 Content-Type: application/json
 
 {
-    "item": "This is third Todo item",
+    "user": "649ab1b7d00dfff8fb50855c"
+    "item": "to do list with user",
     "itemStatus": true
 }
 ###
@@ -22,3 +23,88 @@ Content-Type: application/json
 
 DELETE  http://localhost:5500/api/item/6496b6be3e597ef062dc5b41
 Content-Type: application/json
+
+
+
+###
+POST http://localhost:5500/api/users
+Content-Type: application/json
+
+{
+    "username": "gialap55",
+    "password": "gialap123"
+}
+
+###
+
+GET http://localhost:5500/api/users
+Content-Type: application/json
+
+
+###
+PUT http://localhost:5500/api/users/649ab1ccd00dfff8fb508560
+Content-Type: application/json
+
+{
+    "username": "gialap1232343",
+    "password": "gialap123"
+}
+
+
+###
+
+DELETE  http://localhost:5500/api/users/649ab1ccd00dfff8fb508560
+Content-Type: application/json
+
+
+
+###
+POST http://localhost:5500/api/users/649ab1b7d00dfff8fb50855c/items
+Content-Type: application/json
+
+{
+    "user": "649ab1b7d00dfff8fb50855c",
+    "item": "to do list with user 333",
+    "itemStatus": false
+}
+
+
+
+###
+
+GET http://localhost:5500/api/users/649ab1b7d00dfff8fb50855c/items
+Content-Type: application/json
+
+###
+
+PUT http://localhost:5500/api/users/649ab1b7d00dfff8fb50855c/items/649ab42b0c3b45a678d3b233
+Content-Type: application/json
+
+{
+    "item": "to do list with user have been updated",
+    "itemStatus": true
+}
+
+
+###
+
+DELETE  http://localhost:5500/api/users/649ab1b7d00dfff8fb50855c/items/649ab42b0c3b45a678d3b233
+Content-Type: application/json
+
+
+
+###
+
+DELETE  http://localhost:5500/api/users/649ab1b7d00dfff8fb50855c/items/delete
+Content-Type: application/json
+
+
+###
+POST http://localhost:5500/api/users/login
+Content-Type: application/json
+
+{
+    "username": "gialap",
+    "password": "gialap123"
+}
+

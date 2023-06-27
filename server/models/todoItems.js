@@ -1,18 +1,24 @@
-//import mongoose to create new Schema
-const { Int32 } = require('mongodb');
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-//create Schema
-const TodoSchema = new mongoose.Schema({
-    item:{
-        type: String,
-        required: true
-    },
-    itemStatus:{
-        type: Boolean,
-        required: true
-    }
-})
 
-//export this Schema
-module.exports = mongoose.model('todo', TodoSchema);
+
+const TodoSchema = new Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  item: {
+    type: String,
+    required: true
+  },
+  itemStatus: {
+    type: Boolean,
+    required: true
+  }
+});
+
+module.exports = mongoose.model('Todo', TodoSchema);
+
+
