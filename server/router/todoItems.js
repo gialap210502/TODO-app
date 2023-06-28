@@ -70,8 +70,6 @@ router.delete('/api/items', async (req, res) => {
     }
 });
 
-
-
 //router for user
 // CREATE: Create a new user
 router.post('/api/users', async (req, res) => {
@@ -88,7 +86,7 @@ router.post('/api/users', async (req, res) => {
     }
 });
 
-// CREATE: Create a new user
+// Login
 router.post('/api/users/login', async (req, res) => {
     const { username, password } = req.body;
 
@@ -104,6 +102,9 @@ router.post('/api/users/login', async (req, res) => {
         if (password != user.password) {
             return res.status(401).json({ message: 'Mật khẩu không đúng' });
         }
+            // Lưu thông tin người dùng vào session
+        req.session.user = user;
+        console.log(req.session.user.password);
 
         // Đăng nhập thành công
         res.status(200).json({ message: 'Đăng nhập thành công' });
@@ -123,9 +124,9 @@ router.get('/api/users', async (req, res) => {
 });
 
 // READ: Get a specific user by ID
-router.get('/api/users/:id', async (req, res) => {
+router.get('/api/users/profile', async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.session.user);
         res.status(200).json(user);
     } catch (error) {
         res.status(400).json({ error: error.message });

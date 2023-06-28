@@ -14,15 +14,16 @@ function App() {
   const [unamel, setUnamel] = useState('');
   const [passl, setPassl] = useState('');
   const [repass, setRepass] = useState('');
-  const [isSignInClicked, setIsSignInClicked] = useState(false);
+  const [isSignInClicked, setIsSignInClicked] = useState(true);
   const [isReClicked, setIsReClicked] = useState(false);
-
+  const [userData, setUserData] = useState([]);
+  const [stateLogin, setStateLogin] = useState(false);
 
   //add new item to database
   const addItem = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`http://localhost:5500/api/users/649ab1b7d00dfff8fb50855c/items`, {user: itemUser, item: itemText, itemStatus: false })
+      const res = await axios.post(`http://localhost:5500/api/users/649ab1b7d00dfff8fb50855c/items`, { user: itemUser, item: itemText, itemStatus: false })
       setListItems(prev => [...prev, res.data])
       setItemText('');
       setItemUser('');
@@ -30,15 +31,13 @@ function App() {
       console.log(error);
     }
   }
-
-  //add new user to database
+  //register user to database
   const addUser = async (e) => {
     e.preventDefault();
     try {
       if (pass == repass) {
         const res = await axios.post('http://localhost:5500/api/users', { username: uname, password: pass })
-        setListItems(prev => [...prev, res.data])
-        setItemText('');
+        setIsSignInClicked(true);
       } else {
         console.log("password not match")
       }
@@ -47,12 +46,22 @@ function App() {
       console.log(error);
     }
   }
+  // login
+  const login = async (e) => {
+    e.preventDefault();
+    try {
+        const res = await axios.post('http://localhost:5500/api/users/login', { username: unamel, password: passl });
+        setStateLogin(true);
 
+    } catch (error) {
+      console.log(error);
+    }
+  }
   //function to fetch all items from database -- use useEffect hook
   useEffect(() => {
     const getItemList = async () => {
       try {
-        const res = await axios.get('http://localhost:5500/api/items')
+        const res = await axios.get(`http://localhost:5500/api/users/${userData._id}/items`)
         setListItems(res.data);
       } catch (error) {
         console.log(error);
@@ -60,7 +69,6 @@ function App() {
     }
     getItemList();
   }, []);
-
   //delete item when click delete button
   const deleteItem = async (id) => {
     try {
@@ -71,9 +79,7 @@ function App() {
       console.log(error);
     }
   }
-
   //update item when click update button
-
   //Render update form
   const renderUpdateForm = () => (
     <form className="update-form" onSubmit={(e) => { updateItem(e) }} >
@@ -81,7 +87,6 @@ function App() {
       <button className="update-new-btn" type="submit">Update</button>
     </form>
   )
-
   //update function
   const updateItem = async (e) => {
     e.preventDefault()
@@ -96,7 +101,6 @@ function App() {
       console.log(err);
     }
   }
-
   const handleItemStatusChange = async (itemId, newStatus) => {
     try {
       const res = await axios.put(`http://localhost:5500/api/item/${itemId}`, { itemStatus: newStatus });
@@ -120,25 +124,37 @@ function App() {
         }
       });
       // Cập nhật danh sách mục
-      const updatedListItems = listItems.filter(item => !item.itemStatus, item =>  item.user == "649ab1b7d00dfff8fb50855c", );
+      const updatedListItems = listItems.filter(item => !item.itemStatus, item => item.user == "649ab1b7d00dfff8fb50855c",);
       setListItems(updatedListItems);
     } catch (error) {
       console.log(error);
     }
   };
-
-  const handleSignInClick = () => {
+  const handleSignInClick = (e) => {
     setIsSignInClicked(true);
     setIsReClicked(false);
   };
-  const handleReClick = () => {
+  
+  const handleReClick = (e) => {
     setIsReClicked(true);
     setIsSignInClicked(false);
   };
+  
+  //take user data
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+          const res = await axios.get('http://localhost:5500/api/users/profile')
+          setUserData(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getUser();
+  }, []);
 
-const a = 0;
 
-  if (a == 1) {
+  if (stateLogin) {
     return (
       <div className="App">
         <h1>To Do List</h1>
@@ -173,24 +189,24 @@ const a = 0;
     );
 
   }
-   else if (isSignInClicked) {
+  else if (userData == null && isSignInClicked) {
     return (
       <div className="App">
         <h1>Login</h1>
         <hr />
-        <form onSubmit={e => (e)}>
+        <form onSubmit={e => login(e)}>
           <label id="lb"><b>Username</b></label><br />
           <input type="text" placeholder="Enter Email" name="email" id="email" required onChange={e => { setUnamel(e.target.value) }} value={unamel}></input>
           <label id="lb"><b>Password</b></label><br />
           <input type="password" placeholder="Enter Password" name="psw" id="psw" required onChange={e => { setPassl(e.target.value) }} value={passl}></input>
-          <button type="submit" class="registerbtn">Login</button>
+          <button type="submit" className="registerbtn">Login</button>
         </form>
         <div >
-          <p>Don't have an account? <a onClick={handleReClick}>Login</a></p>
+          <p>Don't have an account? <a onClick={handleReClick}>Register</a></p>
         </div>
       </div>
     );
-  } else {
+  } else if(userData == null && isReClicked) {
     return (
       <div className="App">
         <h1>Register</h1>
