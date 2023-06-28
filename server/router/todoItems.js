@@ -2,6 +2,7 @@ const router = require('express').Router();
 //import todo model
 const todoItemsModel = require('../models/todoItems');
 const User = require('../models/user');
+const bcrypt = require('bcrypt');
 
 
 
@@ -80,36 +81,37 @@ router.post('/api/users', async (req, res) => {
             password: req.body.password
         });
 
-        const savedUser = await newUser.save()
-        .then(() => {
-            res.redirect('/api/users/login');
-        });
+        const savedUser = await newUser.save();
         res.status(200).json(savedUser);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
 
-//login
+// CREATE: Create a new user
 router.post('/api/users/login', async (req, res) => {
     const { username, password } = req.body;
-  
-    // Tìm người dùng trong cơ sở dữ liệu
-    User.findOne({ username: username, password: password })
-      .then((user) => {
-        if (user) {
-          // Lưu thông tin người dùng vào session
-          req.session.user = user;
-        } else {
-          res.send('Invalid username or password');
-        }
-      })
-      .catch((err) => {
-        console.error('Error finding user', err);
-        res.send('An error occurred');
-      });
-  });
 
+    try {
+        // Tìm người dùng dựa trên tên đăng nhập
+        const user = await User.findOne({ username });
+
+        // Kiểm tra xem người dùng có tồn tại hay không
+        if (!user) {
+            return res.status(404).json({ message: 'Tên đăng nhập không hợp lệ' });
+        }
+
+        if (password != user.password) {
+            return res.status(401).json({ message: 'Mật khẩu không đúng' });
+        }
+
+        // Đăng nhập thành công
+        res.status(200).json({ message: 'Đăng nhập thành công' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Đã xảy ra lỗi' });
+    }
+});
 // READ: Get all users
 router.get('/api/users', async (req, res) => {
     try {
@@ -271,7 +273,7 @@ router.delete('/api/users/:userId/items/:itemId', async (req, res) => {
 });
 
 // DELETE: Delete all items with itemStatus=true for a specific user
-router.delete('/api/users/:userId/items/delete', async (req, res) => {
+router.delete('/api/users/:userId/items', async (req, res) => {
     try {
         const userId = req.params.userId;
 
@@ -282,7 +284,7 @@ router.delete('/api/users/:userId/items/delete', async (req, res) => {
         }
 
         // Xóa tất cả các mục có itemStatus=true và thuộc về người dùng
-        const filter = { user: mongoose.Types.ObjectId(userId), itemStatus: true };
+        const filter = { user: userId, itemStatus: true };
         const deleteResult = await todoItemsModel.deleteMany(filter);
 
         res.status(200).json({ message: `${deleteResult.deletedCount} items deleted successfully` });

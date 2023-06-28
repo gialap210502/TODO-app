@@ -5,6 +5,7 @@ import { C } from 'jssip';
 
 function App() {
   const [itemText, setItemText] = useState('');
+  const [itemUser, setItemUser] = useState('');
   const [listItems, setListItems] = useState([]);
   const [isUpdating, setIsUpdating] = useState('');
   const [updateItemText, setUpdateItemText] = useState('');
@@ -21,9 +22,10 @@ function App() {
   const addItem = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5500/api/item', { item: itemText, itemStatus: false })
+      const res = await axios.post(`http://localhost:5500/api/users/649ab1b7d00dfff8fb50855c/items`, {user: itemUser, item: itemText, itemStatus: false })
       setListItems(prev => [...prev, res.data])
       setItemText('');
+      setItemUser('');
     } catch (error) {
       console.log(error);
     }
@@ -112,13 +114,13 @@ function App() {
   };
   const deleteAllItemsWithStatus = async () => {
     try {
-      const res = await axios.delete('http://localhost:5500/api/items', {
+      const res = await axios.delete('http://localhost:5500/api/users/649ab1b7d00dfff8fb50855c/items', {
         params: {
           itemStatus: true
         }
       });
       // Cập nhật danh sách mục
-      const updatedListItems = listItems.filter(item => !item.itemStatus);
+      const updatedListItems = listItems.filter(item => !item.itemStatus, item =>  item.user == "649ab1b7d00dfff8fb50855c", );
       setListItems(updatedListItems);
     } catch (error) {
       console.log(error);
@@ -134,9 +136,9 @@ function App() {
     setIsSignInClicked(false);
   };
 
+const a = 0;
 
-
-  if (false) {
+  if (a == 1) {
     return (
       <div className="App">
         <h1>To Do List</h1>
@@ -169,20 +171,22 @@ function App() {
         </div>
       </div>
     );
-  } else if (isSignInClicked) {
+
+  }
+   else if (isSignInClicked) {
     return (
       <div className="App">
         <h1>Login</h1>
         <hr />
-        <form onSubmit={e => addUser(e)}>
+        <form onSubmit={e => (e)}>
           <label id="lb"><b>Username</b></label><br />
           <input type="text" placeholder="Enter Email" name="email" id="email" required onChange={e => { setUnamel(e.target.value) }} value={unamel}></input>
           <label id="lb"><b>Password</b></label><br />
           <input type="password" placeholder="Enter Password" name="psw" id="psw" required onChange={e => { setPassl(e.target.value) }} value={passl}></input>
-          <button type="submit" class="registerbtn">Register</button>
+          <button type="submit" class="registerbtn">Login</button>
         </form>
         <div >
-          <p>Don't have an account? <a onClick={handleReClick}>Register</a></p>
+          <p>Don't have an account? <a onClick={handleReClick}>Login</a></p>
         </div>
       </div>
     );
@@ -198,7 +202,7 @@ function App() {
           <input type="password" placeholder="Enter Password" name="psw" id="psw" required onChange={e => { setPass(e.target.value) }} value={pass}></input>
           <label id="lb"><b>Confirm Password</b></label><br />
           <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required onChange={e => { setRepass(e.target.value) }} value={repass}></input>
-          <button type="submit" class="registerbtn">Register</button>
+          <button type="submit" className="registerbtn">Register</button>
         </form>
         <div >
           <p>Already have an account? <a onClick={handleSignInClick}>Sign in</a>.</p>
