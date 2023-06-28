@@ -104,7 +104,7 @@ router.post('/api/users/login', async (req, res) => {
         }
             // Lưu thông tin người dùng vào session
         req.session.user = user;
-        console.log(req.session.user.password);
+        console.log(req.session.user.id);
 
         // Đăng nhập thành công
         res.status(200).json({ message: 'Đăng nhập thành công' });

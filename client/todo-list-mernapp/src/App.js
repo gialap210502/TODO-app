@@ -23,7 +23,7 @@ function App() {
   const addItem = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`http://localhost:5500/api/users/649ab1b7d00dfff8fb50855c/items`, { user: itemUser, item: itemText, itemStatus: false })
+      const res = await axios.post(`http://localhost:5500/api/users/${userData}/items`, { user: userData, item: itemText, itemStatus: false })
       setListItems(prev => [...prev, res.data])
       setItemText('');
       setItemUser('');
@@ -50,8 +50,10 @@ function App() {
   const login = async (e) => {
     e.preventDefault();
     try {
-        const res = await axios.post('http://localhost:5500/api/users/login', { username: unamel, password: passl });
-        setStateLogin(true);
+      const res = await axios.post('http://localhost:5500/api/users/login', { username: unamel, password: passl });
+      const res1 = await axios.get('http://localhost:5500/api/users/profile')
+      setUserData(res1.data);
+      setStateLogin(true);
 
     } catch (error) {
       console.log(error);
@@ -61,7 +63,8 @@ function App() {
   useEffect(() => {
     const getItemList = async () => {
       try {
-        const res = await axios.get(`http://localhost:5500/api/users/${userData._id}/items`)
+        const res = await axios.get(`http://localhost:5500/api/users/${userData}/items`)
+
         setListItems(res.data);
       } catch (error) {
         console.log(error);
@@ -118,7 +121,7 @@ function App() {
   };
   const deleteAllItemsWithStatus = async () => {
     try {
-      const res = await axios.delete('http://localhost:5500/api/users/649ab1b7d00dfff8fb50855c/items', {
+      const res = await axios.delete(`http://localhost:5500/api/users/${userData._id}/items`, {
         params: {
           itemStatus: true
         }
@@ -134,24 +137,29 @@ function App() {
     setIsSignInClicked(true);
     setIsReClicked(false);
   };
-  
+
   const handleReClick = (e) => {
     setIsReClicked(true);
     setIsSignInClicked(false);
   };
-  
+
   //take user data
+
   useEffect(() => {
+
     const getUser = async () => {
       try {
+
           const res = await axios.get('http://localhost:5500/api/users/profile')
           setUserData(res.data);
+
       } catch (error) {
         console.log(error);
       }
     }
     getUser();
   }, []);
+
 
 
   if (stateLogin) {
@@ -189,7 +197,7 @@ function App() {
     );
 
   }
-  else if (userData == null && isSignInClicked) {
+  else if (stateLogin == false && isSignInClicked) {
     return (
       <div className="App">
         <h1>Login</h1>
@@ -206,7 +214,7 @@ function App() {
         </div>
       </div>
     );
-  } else if(userData == null && isReClicked) {
+  } else if (stateLogin == false && isReClicked) {
     return (
       <div className="App">
         <h1>Register</h1>
