@@ -22,7 +22,10 @@ app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 5500;
 
 //use cors
-app.use(cors());
+app.use(cors({
+    credentials: true,
+    origin: 'http://localhost:3000', // Replace with your frontend URL
+  }));
 
 // import router
 const TodoItemRoute = require('./router/todoItems');

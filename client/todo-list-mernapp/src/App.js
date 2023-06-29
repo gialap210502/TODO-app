@@ -19,11 +19,12 @@ function App() {
   const [userData, setUserData] = useState([]);
   const [stateLogin, setStateLogin] = useState(false);
 
+
   //add new item to database
   const addItem = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`http://localhost:5500/api/users/${userData}/items`, { user: userData, item: itemText, itemStatus: false })
+      const res = await axios.post(`http://localhost:5500/api/users/${userData._id}/items`, { user: userData._id, item: itemText, itemStatus: false })
       setListItems(prev => [...prev, res.data])
       setItemText('');
       setItemUser('');
@@ -50,27 +51,53 @@ function App() {
   const login = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5500/api/users/login', { username: unamel, password: passl });
-      const res1 = await axios.get('http://localhost:5500/api/users/profile')
-      setUserData(res1.data);
+      const res = await axios.post('http://localhost:5500/api/users/login', { username: unamel, password: passl }, { withCredentials: true });
+      // const res1 = await axios.get('http://localhost:5500/api/users/profile', { withCredentials: true });
+      // setUserData(res1.data);
       setStateLogin(true);
+      const getItemList = async () => {
+        try {
+          const res = await axios.get(`http://localhost:5500/api/users/${userData._id}/items`)
+  
+          setListItems(res.data);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      getItemList();
 
     } catch (error) {
       console.log(error);
     }
   }
+    //take user data
+
+    useEffect(() => {
+
+      const getUser = async () => {
+        try {
+  
+            const res = await axios.get('http://localhost:5500/api/users/profile', { withCredentials: true })
+            setUserData(res.data);
+  
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      getUser();
+    }, []);
   //function to fetch all items from database -- use useEffect hook
   useEffect(() => {
     const getItemList = async () => {
       try {
-        const res = await axios.get(`http://localhost:5500/api/users/${userData}/items`)
+        const res = await axios.get(`http://localhost:5500/api/users/${userData._id}/items`)
 
         setListItems(res.data);
       } catch (error) {
         console.log(error);
       }
     }
-    getItemList();
+      getItemList();
   }, []);
   //delete item when click delete button
   const deleteItem = async (id) => {
@@ -141,24 +168,9 @@ function App() {
   const handleReClick = (e) => {
     setIsReClicked(true);
     setIsSignInClicked(false);
-  };
+  }; 
 
-  //take user data
 
-  useEffect(() => {
-
-    const getUser = async () => {
-      try {
-
-          const res = await axios.get('http://localhost:5500/api/users/profile')
-          setUserData(res.data);
-
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    getUser();
-  }, []);
 
 
 
@@ -197,7 +209,7 @@ function App() {
     );
 
   }
-  else if (stateLogin == false && isSignInClicked) {
+  else if (stateLogin == false && isSignInClicked && userData != null) {
     return (
       <div className="App">
         <h1>Login</h1>
@@ -214,7 +226,7 @@ function App() {
         </div>
       </div>
     );
-  } else if (stateLogin == false && isReClicked) {
+  } else if (stateLogin == false && isReClicked && userData != null) {
     return (
       <div className="App">
         <h1>Register</h1>
