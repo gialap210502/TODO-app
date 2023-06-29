@@ -194,7 +194,7 @@ function App() {
     );
 
   }
-  else if (stateLogin === false && isSignInClicked && userData != null) {
+  else if (stateLogin === false && isSignInClicked && userData == null) {
     return (
       <div className="App">
         <h1>Login</h1>
@@ -211,7 +211,7 @@ function App() {
         </div>
       </div>
     );
-  } else if (stateLogin === false && isReClicked && userData != null) {
+  } else if (stateLogin === false && isReClicked && userData == null) {
     return (
       <div className="App">
         <h1>Register</h1>
