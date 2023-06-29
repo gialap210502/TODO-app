@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './App.css';
-import { C } from 'jssip';
+
 
 function App() {
   const [itemText, setItemText] = useState('');
@@ -19,6 +19,30 @@ function App() {
   const [userData, setUserData] = useState([]);
   const [stateLogin, setStateLogin] = useState(false);
 
+
+
+// Load data from localStorage on component mount
+useEffect(() => {
+  const storedUserData = localStorage.getItem('userData');
+  const storedStateLogin = localStorage.getItem('stateLogin');
+
+  if (storedUserData) {
+    setUserData(JSON.parse(storedUserData));
+  }
+
+  if (storedStateLogin) {
+    setStateLogin(JSON.parse(storedStateLogin));
+  }
+}, []);
+
+// Save data to localStorage on state changes
+useEffect(() => {
+  localStorage.setItem('userData', JSON.stringify(userData));
+}, [userData]);
+
+useEffect(() => {
+  localStorage.setItem('stateLogin', JSON.stringify(stateLogin));
+}, [stateLogin]);
 
   //add new item to database
   const addItem = async (e) => {
@@ -52,9 +76,8 @@ function App() {
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:5500/api/users/login', { username: unamel, password: passl }, { withCredentials: true });
-      // const res1 = await axios.get('http://localhost:5500/api/users/profile', { withCredentials: true });
-      // setUserData(res1.data);
       setStateLogin(true);
+      ///get item
       const getItemList = async () => {
         try {
           const res = await axios.get(`http://localhost:5500/api/users/${userData._id}/items`)
@@ -86,19 +109,6 @@ function App() {
       }
       getUser();
     }, []);
-  //function to fetch all items from database -- use useEffect hook
-  useEffect(() => {
-    const getItemList = async () => {
-      try {
-        const res = await axios.get(`http://localhost:5500/api/users/${userData._id}/items`)
-
-        setListItems(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-      getItemList();
-  }, []);
   //delete item when click delete button
   const deleteItem = async (id) => {
     try {
@@ -170,10 +180,6 @@ function App() {
     setIsSignInClicked(false);
   }; 
 
-
-
-
-
   if (stateLogin) {
     return (
       <div className="App">
@@ -209,7 +215,7 @@ function App() {
     );
 
   }
-  else if (stateLogin == false && isSignInClicked && userData != null) {
+  else if (stateLogin === false && isSignInClicked && userData != null) {
     return (
       <div className="App">
         <h1>Login</h1>
@@ -226,7 +232,7 @@ function App() {
         </div>
       </div>
     );
-  } else if (stateLogin == false && isReClicked && userData != null) {
+  } else if (stateLogin === false && isReClicked && userData != null) {
     return (
       <div className="App">
         <h1>Register</h1>
