@@ -59,6 +59,7 @@ function App() {
       ///get item
       const getItemList = async () => {
         try {
+          console.log(userData)
           const res = await axios.get(`http://lapduong.gcalls.vn:5500/api/users/${userData._id}/items`)
 
           setListItems(res.data);
