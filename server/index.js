@@ -4,10 +4,10 @@ const dotenv = require('dotenv').config();
 const cors = require('cors');
 const session = require('express-session');
 
+
 const app = express();
 //use express.jon() to get data into json format
 app.use(express.json());
-
 
 // Cấu hình session
 app.use(session({
@@ -25,10 +25,11 @@ const PORT = process.env.PORT || 5500;
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:3000', // Replace with your frontend URL
-  }));
+}));
 
 // import router
 const TodoItemRoute = require('./router/todoItems');
+const Auth = require('./router/auth');
 
 //connect to mongoDB
 const db = "mongodb+srv://LapDZ:gialap123@cluster0.hxgrx.mongodb.net/?retryWrites=true&w=majority";
@@ -39,6 +40,8 @@ mongoose.connect(db)
 
 
 app.use('/', TodoItemRoute);
+app.use('/', Auth);
+
 
 //Add Port and connect to server
 app.listen(PORT, () => console.log("Server connected"));

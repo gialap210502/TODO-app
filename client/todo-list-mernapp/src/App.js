@@ -56,6 +56,8 @@ function App() {
     try {
       const res = await axios.post('http://localhost:5500/api/users/login', { username: unamel, password: passl }, { withCredentials: true });
       setStateLogin(true);
+      const res1 = await axios.get('http://localhost:5500/api/users/profile', { withCredentials: true })
+      setUserData(res1.data);
       ///get item
       const getItemList = async () => {
         try {
@@ -159,7 +161,7 @@ function App() {
     setIsSignInClicked(false);
   };
 
-  if (stateLogin) {
+  if (stateLogin === true) {
     return (
       <div className="App">
         <h1>To Do List</h1>
@@ -194,7 +196,7 @@ function App() {
     );
 
   }
-  else if (stateLogin === false && isSignInClicked && userData != null) {
+  else if (stateLogin === false && isSignInClicked && userData == null) {
     return (
       <div className="App">
         <h1>Login</h1>
@@ -211,7 +213,7 @@ function App() {
         </div>
       </div>
     );
-  } else if (stateLogin === false && isReClicked && userData != null) {
+  } else if (stateLogin === false && isReClicked && userData == null) {
     return (
       <div className="App">
         <h1>Register</h1>
