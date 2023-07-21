@@ -27,7 +27,7 @@ function App() {
   const addItem = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`http://localhost:5500/api/users/${userData._id}/items`, { user: userData._id, item: itemText, itemStatus: false })
+      const res = await axios.post(`http://lapduong.gcalls.vn:5500/api/users/${userData._id}/items`, { user: userData._id, item: itemText, itemStatus: false })
       setListItems(prev => [...prev, res.data])
       setItemText('');
       setItemUser('');
@@ -40,7 +40,7 @@ function App() {
     e.preventDefault();
     try {
       if (pass == repass) {
-        const res = await axios.post('http://localhost:5500/api/users', { username: uname, password: pass })
+        const res = await axios.post('http://lapduong.gcalls.vn:5500/api/users', { username: uname, password: pass })
         setIsSignInClicked(true);
       } else {
         console.log("password not match")
@@ -54,12 +54,12 @@ function App() {
   const login = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5500/api/users/login', { username: unamel, password: passl }, { withCredentials: true });
+      const res = await axios.post('http://lapduong.gcalls.vn:5500/api/users/login', { username: unamel, password: passl }, { withCredentials: true });
       setStateLogin(true);
       ///get item
       const getItemList = async () => {
         try {
-          const res = await axios.get(`http://localhost:5500/api/users/${userData._id}/items`)
+          const res = await axios.get(`http://lapduong.gcalls.vn:5500/api/users/${userData._id}/items`)
 
           setListItems(res.data);
         } catch (error) {
@@ -79,7 +79,7 @@ function App() {
     const getUser = async () => {
       try {
 
-        const res = await axios.get('http://localhost:5500/api/users/profile', { withCredentials: true })
+        const res = await axios.get('http://lapduong.gcalls.vn:5500/api/users/profile', { withCredentials: true })
         setUserData(res.data);
 
       } catch (error) {
@@ -91,7 +91,7 @@ function App() {
   //delete item when click delete button
   const deleteItem = async (id) => {
     try {
-      const res = await axios.delete(`http://localhost:5500/api/item/${id}`);
+      const res = await axios.delete(`http://lapduong.gcalls.vn:5500/api/item/${id}`);
       const newListItem = listItems.filter(item => item._id !== id);
       setListItems(newListItem);
     } catch (error) {
@@ -110,7 +110,7 @@ function App() {
   const updateItem = async (e) => {
     e.preventDefault()
     try {
-      const res = await axios.put(`http://localhost:5500/api/item/${isUpdating}`, { item: updateItemText })
+      const res = await axios.put(`http://lapduong.gcalls.vn:5500/api/item/${isUpdating}`, { item: updateItemText })
       console.log(res.data)
       const updatedItemIndex = listItems.findIndex(item => item._id === isUpdating);
       const updatedItem = listItems[updatedItemIndex].item = updateItemText;
@@ -122,7 +122,7 @@ function App() {
   }
   const handleItemStatusChange = async (itemId, newStatus) => {
     try {
-      const res = await axios.put(`http://localhost:5500/api/item/${itemId}`, { itemStatus: newStatus });
+      const res = await axios.put(`http://lapduong.gcalls.vn:5500/api/item/${itemId}`, { itemStatus: newStatus });
       // Cập nhật danh sách mục
       const updatedListItems = listItems.map(item => {
         if (item._id === itemId) {
@@ -137,7 +137,7 @@ function App() {
   };
   const deleteAllItemsWithStatus = async () => {
     try {
-      const res = await axios.delete(`http://localhost:5500/api/users/${userData._id}/items`, {
+      const res = await axios.delete(`http://lapduong.gcalls.vn:5500/api/users/${userData._id}/items`, {
         params: {
           itemStatus: true
         }
