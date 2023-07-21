@@ -21,7 +21,28 @@ function App() {
 
 
 
+// Load data from localStorage on component mount
+useEffect(() => {
+  const storedUserData = localStorage.getItem('userData');
+  const storedStateLogin = localStorage.getItem('stateLogin');
 
+  if (storedUserData) {
+    setUserData(JSON.parse(storedUserData));
+  }
+
+  if (storedStateLogin) {
+    setStateLogin(JSON.parse(storedStateLogin));
+  }
+}, []);
+
+// Save data to localStorage on state changes
+useEffect(() => {
+  localStorage.setItem('userData', JSON.stringify(userData));
+}, [userData]);
+
+useEffect(() => {
+  localStorage.setItem('stateLogin', JSON.stringify(stateLogin));
+}, [stateLogin]);
 
   //add new item to database
   const addItem = async (e) => {
@@ -59,9 +80,14 @@ function App() {
       ///get item
       const getItemList = async () => {
         try {
+<<<<<<< HEAD
           console.log(userData)
           const res = await axios.get(`http://lapduong.gcalls.vn:5500/api/users/${userData._id}/items`)
 
+=======
+          const res = await axios.get(`http://localhost:5500/api/users/${userData._id}/items`)
+  
+>>>>>>> parent of 8a290a1 (change)
           setListItems(res.data);
         } catch (error) {
           console.log(error);
@@ -73,10 +99,11 @@ function App() {
       console.log(error);
     }
   }
-  //take user data
+    //take user data
 
-  useEffect(() => {
+    useEffect(() => {
 
+<<<<<<< HEAD
     const getUser = async () => {
       try {
 
@@ -85,10 +112,20 @@ function App() {
 
       } catch (error) {
         console.log(error);
+=======
+      const getUser = async () => {
+        try {
+  
+            const res = await axios.get('http://localhost:5500/api/users/profile', { withCredentials: true })
+            setUserData(res.data);
+  
+        } catch (error) {
+          console.log(error);
+        }
+>>>>>>> parent of 8a290a1 (change)
       }
-    }
-    getUser();
-  }, []);
+      getUser();
+    }, []);
   //delete item when click delete button
   const deleteItem = async (id) => {
     try {
@@ -158,7 +195,7 @@ function App() {
   const handleReClick = (e) => {
     setIsReClicked(true);
     setIsSignInClicked(false);
-  };
+  }; 
 
   if (stateLogin) {
     return (
