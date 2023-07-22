@@ -114,3 +114,8 @@ Content-Type: application/json
 GET  http://localhost:5500/api/users/
 Content-Type: application/json
 
+
+###
+
+POST http://localhost:5500/api/users/logout
+Content-Type: application/json

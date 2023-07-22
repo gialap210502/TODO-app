@@ -4,13 +4,14 @@ const router = require("express").Router();
 const { verifyToken } = require("../controller/verifyToken");
 
 // CREATE: Create a new user
-router.post('/api/users', authController.registerUser);
+router.post('/api/users/register', authController.registerUser);
 // Login
 router.post('/api/users/login', authController.Login);
 
 // READ: Get all users
-router.get('/api/users', verifyToken, authController.getAllUsers);
-
+router.get('/api/users', authController.getAllUsers);
+//logout
+router.post('/api/users/logout', verifyToken, authController.logOut);
 
 
 // UPDATE: Update a specific user by ID

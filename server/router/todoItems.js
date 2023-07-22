@@ -1,13 +1,15 @@
-const router = require('express').Router();
+const router = require("express").Router();
 //import todo model
 const todoItemsModel = require('../models/todoItems');
 const User = require('../models/user');
+const listController = require("../controller/listcontroller");
 
 
 
 
 
-//create route
+//all item
+router.post('/api/users/:userId/items', listController.GetAllTodo);
 
 //save item into database
 router.post('/api/item', async (req, res) => {
@@ -69,12 +71,6 @@ router.delete('/api/items', async (req, res) => {
         res.json(error);
     }
 });
-
-//router for user
-
-
-
-
 
 
 //export router
