@@ -3,13 +3,13 @@ const router = require("express").Router();
 const todoItemsModel = require('../models/todoItems');
 const User = require('../models/user');
 const listController = require("../controller/listcontroller");
-
+const midlewareVerify = require('../controller/verifyToken');
 
 
 
 
 //all item
-router.post('/api/users/:userId/items', listController.GetAllTodo);
+router.get('/api/users/:userId/items', listController.GetAllTodo);
 
 //save item into database
 router.post('/api/item', async (req, res) => {
@@ -51,7 +51,7 @@ router.put('/api/item/:id', async (req, res) => {
 })
 
 //Delete Items
-router.delete('/api/item/:id', async (req, res) => {
+router.delete('/api/item/:id',midlewareVerify.verifyTokenAndUserAuthorization,  async (req, res) => {
     try {
         //find by id
         const updateItem = await todoItemsModel.findByIdAndDelete(req.params.id, { $set: req.body });

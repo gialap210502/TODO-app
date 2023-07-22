@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
-const User = require('../models/todoItems');
 const Todo = require('../models/user');
 const jwt = require("jsonwebtoken");
+const todoItemsModel = require('../models/todoItems');
 
 let refreshTokens = [];
 
@@ -10,13 +10,6 @@ const listcontroller = {
     GetAllTodo: async (req, res) => {
         try {
             const userId = req.params.userId;
-
-            // Kiểm tra xem người dùng có tồn tại không
-            const user = await User.findById(userId);
-            if (!user) {
-                return res.status(404).json({ message: 'User not found' });
-            }
-
             // Lấy tất cả các mục liên quan đến người dùng
             const items = await todoItemsModel.find({ user: userId });
             res.status(200).json(items);

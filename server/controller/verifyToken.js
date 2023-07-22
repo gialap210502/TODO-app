@@ -6,7 +6,8 @@ const verifyToken = (req, res, next) => {
     // const refreshToken = req.cookies.refreshToken;
     if (token) {
         const accessToken = token.split(" ")[1];
-        jwt.verify(accessToken, process.env.JWT_ACCESS_KEY, (err, user) => {
+        console.log(accessToken);
+        jwt.verify(accessToken, process.env.secretkey, (err, user) => {
             if (err) {
                 return res.status(403).json("Token is not valid!");
             }

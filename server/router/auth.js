@@ -1,17 +1,17 @@
 
 const authController = require("../controller/authcontroller");
 const router = require("express").Router();
-const { verifyToken } = require("../controller/verifyToken");
+const verifyToken = require("../controller/verifyToken");
 
 // CREATE: Create a new user
 router.post('/api/users/register', authController.registerUser);
 // Login
 router.post('/api/users/login', authController.Login);
-
-// READ: Get all users
-router.get('/api/users', authController.getAllUsers);
+router.post('/api/users/refresh', authController.requestRefreshToken);
+// READ: Get all task
+router.get('/api/users', verifyToken.verifyToken, authController.getAllUsers);
 //logout
-router.post('/api/users/logout', verifyToken, authController.logOut);
+router.post('/api/users/logout', authController.logOut);
 
 
 // UPDATE: Update a specific user by ID
@@ -32,14 +32,7 @@ router.put('/api/users/:id', async (req, res) => {
 });
 
 // DELETE: Delete a specific user by ID
-router.delete('/api/users/:id', async (req, res) => {
-    try {
-        await User.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: 'User deleted successfully' });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
+router.delete('/api/users/:id', authController.deleteUser);
 
 
 

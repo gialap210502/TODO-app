@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config();
 const cors = require('cors');
 const session = require('express-session');
 
@@ -32,7 +33,9 @@ const TodoItemRoute = require('./router/todoItems');
 const Auth = require('./router/auth');
 
 //connect to mongoDB
-const db = "mongodb+srv://LapDZ:gialap123@cluster0.hxgrx.mongodb.net/?retryWrites=true&w=majority";
+//const db = "mongodb+srv://LapDZ:gialap123@cluster0.hxgrx.mongodb.net/?retryWrites=true&w=majority";
+
+const db = process.env.DB;
 mongoose.connect(db)
     .then(() => console.log('Database connected'))
     .catch(err => console.log(err))

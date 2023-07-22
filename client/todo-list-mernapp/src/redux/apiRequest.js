@@ -3,7 +3,18 @@ import {
     loginStart, loginFailed, loginSuccess,
     registerStart, registerSuccess, registerFailed,
 } from "./authSlice";
-import { getUserStart, getUserFailed, getUserSuccess } from "./userSlice";
+import {
+    getUserStart, getUserFailed, getUserSuccess,
+    deleteUserStart, deleteUserFailed, deleteUserSuccess
+} from "./userSlice";
+import {
+    getTaskStart,
+    getTaskFailed,
+    getTaskSuccess,
+    deleteTaskStart,
+    deleteTaskFailed,
+    deleteTaskSuccess
+} from "./taskSlice";
 
 export const loginUser = async (user, dispatch, navigate) => {
     dispatch(loginStart());
@@ -31,7 +42,7 @@ export const getAllUser = async (accessToken, dispatch) => {
     try {
         const res = await axios.get('http://localhost:5500/api/users', {
             headers: {
-                token: `Bearer  + ${accessToken}`
+                token: `Bearer ${accessToken}`
             }
         });
         dispatch(getUserSuccess(res.data));
@@ -39,16 +50,29 @@ export const getAllUser = async (accessToken, dispatch) => {
         dispatch(getUserFailed());
     }
 }
-// export const getAllListById = async (accessToken, dispatch) => {
-//     dispatch(getUserStart());
-//     try {
-//         const res = await axios.get('http://localhost:5500/api/users/:userId/items', {
-//             headers: {
-//                 token: `Bearer  + ${accessToken}`
-//             }
-//         });
-//         dispatch(getUserSuccess(res.data));
-//     } catch (error) {
-//         dispatch(getUserFailed());
-//     }
-// }
+export const deleteUser = async (accessToken, dispatch, id) => {
+    dispatch(deleteUserStart());
+    try {
+        const res = await axios.delete('http://localhost:5500/api/users/' + id, {
+            headers: {
+                token: `Bearer  + ${accessToken}`
+            }
+        });
+        dispatch(deleteUserSuccess(res.data));
+    } catch (error) {
+        dispatch(deleteUserFailed(error.response.data));
+    }
+}
+export const getAllListById = async (accessToken, dispatch, id) => {
+    dispatch(getTaskStart());
+    try {
+        const res = await axios.get(`http://localhost:5500/api/users/${id}/items`, {
+            headers: {
+                token: `Bearer ${accessToken}`
+            }
+        });
+        dispatch(getTaskSuccess(res.data));
+    } catch (error) {
+        dispatch(getTaskFailed());
+    }
+}
