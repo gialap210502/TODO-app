@@ -33,6 +33,18 @@ const TaskSlice = createSlice({
             state.tasks.isfetching = false;
             state.tasks.error = true;
             state.msp = action.payload;
+        },
+        addTaskStart: (state) => {
+            state.tasks.isfetching = true;
+        },
+        addTaskSuccess: (state, action) => {
+            state.tasks.isfetching = false;
+            state.msp = action.payload;
+        },
+        addTaskFailed: (state, action) => {
+            state.tasks.isfetching = false;
+            state.tasks.error = true;
+            state.msp = action.payload;
         }
 
     }
@@ -43,7 +55,10 @@ export const {
     getTaskSuccess,
     deleteTaskStart,
     deleteTaskFailed,
-    deleteTaskSuccess
+    deleteTaskSuccess,
+    addTaskStart,
+    addTaskFailed,
+    addTaskSuccess
 } = TaskSlice.actions;
 
 export default TaskSlice.reducer;

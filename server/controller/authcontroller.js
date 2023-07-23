@@ -125,58 +125,8 @@ const authcontroller = {
             res.status(400).json({ error: error.message });
         }
     },
+
 };
-
-
-
-
-
-
-// ///
-// // CREATE: Create a new item for a specific user
-// router.post('/api/users/:userId/items', async (req, res) => {
-//     try {
-//         const userId = req.params.userId;
-
-//         // Kiểm tra xem người dùng có tồn tại không
-//         const user = await User.findById(userId);
-//         if (!user) {
-//             return res.status(404).json({ message: 'User not found' });
-//         }
-
-//         // Tạo một mục mới cho người dùng
-//         const newItem = new todoItemsModel({
-//             user: userId,
-//             item: req.body.item,
-//             itemStatus: req.body.itemStatus
-//         });
-
-//         const savedItem = await newItem.save();
-//         res.status(200).json(savedItem);
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// });
-
-
-// // READ: Get all todo with a specific user by ID
-// router.get('/api/users/:userId/items', async (req, res) => {
-//     try {
-//         const userId = req.params.userId;
-
-//         // Kiểm tra xem người dùng có tồn tại không
-//         const user = await User.findById(userId);
-//         if (!user) {
-//             return res.status(404).json({ message: 'User not found' });
-//         }
-
-//         // Lấy tất cả các mục liên quan đến người dùng
-//         const items = await todoItemsModel.find({ user: userId });
-//         res.status(200).json(items);
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// });
 
 // /////
 // router.put('/api/users/:userId/items/:itemId', async (req, res) => {

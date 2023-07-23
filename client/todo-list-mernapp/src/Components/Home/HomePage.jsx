@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import jwt_decode from 'jwt-decode';
-import { getAllUser, getAllListById, deleteUser } from '../../redux/apiRequest';
+import { getAllUser, getAllListById, deleteUser, addTaskById, deleteAllItemsWithStatusTrue } from '../../redux/apiRequest';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginSuccess } from '../../redux/authSlice';
 
@@ -12,6 +12,7 @@ const HomePage = () => {
     const [listItems, setListItems] = useState([]);
     const [itemText, setItemText] = useState('');
     const [itemUser, setItemUser] = useState('');
+    const [itemStatus, setItemStatus] = useState('');
     const [isUpdating, setIsUpdating] = useState('');
     const [updateItemText, setUpdateItemText] = useState('');
     const [userData, setUserData] = useState([]);
@@ -95,8 +96,9 @@ const HomePage = () => {
     const addItem = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`http://localhost:5500/api/users/${userData._id}/items`, { user: userData._id, item: itemText, itemStatus: false })
-            setListItems(prev => [...prev, res.data])
+            const Task = { user: user?._id, item: itemText, itemStatus: false };
+            addTaskById(Task, user?.accesstoken, dispatch, user?._id)
+            getAllListById(user?.accesstoken, dispatch, user?._id);
             setItemText('');
             setItemUser('');
         } catch (error) {
@@ -114,30 +116,27 @@ const HomePage = () => {
                 }
                 return item;
             });
-            setListItems(updatedListItems);
+            getAllListById(user?.accesstoken, dispatch, user?._id);
         } catch (error) {
             console.log(error);
+
         }
     };
     const deleteAllItemsWithStatus = async () => {
         try {
-            const res = await axios.delete(`http://localhost:5500/api/users/${userData._id}/items`, {
-                params: {
-                    itemStatus: true
-                }
-            });
+            deleteAllItemsWithStatusTrue(user?.accesstoken, dispatch, user?._id);
             // Cập nhật danh sách mục
-            const updatedListItems = listItems.filter(item => !item.itemStatus, item => item.user == "649ab1b7d00dfff8fb50855c",);
-            setListItems(updatedListItems);
+            getAllListById(user?.accesstoken, dispatch, user?._id);
         } catch (error) {
             console.log(error);
+            console.log("loi 122");
         }
     };
 
     //delete item when click delete button
     const deleteItem = async (id, userId) => {
         try {
-            await axiosJWT.delete(`http://localhost:5500/api/item/${id}`, {
+            await axios.delete(`http://localhost:5500/api/item/${id}`, {
                 id: userId
             });
             getAllListById(user?.accesstoken, dispatch, user?._id);

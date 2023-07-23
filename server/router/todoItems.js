@@ -11,33 +11,10 @@ const midlewareVerify = require('../controller/verifyToken');
 //all item
 router.get('/api/users/:userId/items', listController.GetAllTodo);
 
-//save item into database
-router.post('/api/item', async (req, res) => {
-    try {
-        const newItem = new todoItemsModel({
-            item: req.body.item,
-            itemStatus: req.body.itemStatus
-        })
-        //save item to database
-        const saveItem = await newItem.save()
-        res.status(200).json(saveItem);
+// CREATE: Create a new item for a specific user
+router.post('/api/users/:userId/items', listController.createTask);
 
-    } catch (error) {
-        res.json(error);
-    }
-})
-
-
-//get item from database
-router.get('/api/items', async (req, res) => {
-    try {
-        const allTodoItems = await todoItemsModel.find({});
-        res.status(200).json(allTodoItems)
-    } catch (error) {
-        res.json(error);
-    }
-})
-
+router.delete('/api/users/:userId/items', listController.deleteAllItemsWithItemStatusTrue)
 
 //Update Items
 router.put('/api/item/:id', async (req, res) => {
