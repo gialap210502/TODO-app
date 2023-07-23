@@ -10,15 +10,15 @@ import {
 import {
     getTaskStart, getTaskFailed, getTaskSuccess,
     deleteTaskStart, deleteTaskFailed, deleteTaskSuccess,
-    addTaskStart, addTaskFailed, addTaskSuccess
+    addTaskStart, addTaskFailed, addTaskSuccess,
+    updateTaskStart, updateTaskFailed, updateTaskSuccess
 } from "./taskSlice";
 
 export const loginUser = async (user, dispatch, navigate) => {
     dispatch(loginStart());
     try {
-        const res = await axios.post('http://localhost:5500/api/users/login', user);
+        const res = await axios.post('http://localhost:5500/api/users/login', user, { withCredentials: true });
         dispatch(loginSuccess(res.data));
-
         navigate("/home");
     } catch (error) {
         dispatch(loginFailed());
@@ -42,7 +42,8 @@ export const getAllUser = async (accessToken, dispatch) => {
             headers: {
                 token: `Bearer ${accessToken}`
             }
-        });
+
+        }, { withCredentials: true });
         dispatch(getUserSuccess(res.data));
     } catch (error) {
         dispatch(getUserFailed());
@@ -64,21 +65,21 @@ export const deleteUser = async (accessToken, dispatch, id) => {
 export const getAllListById = async (accessToken, dispatch, id) => {
     dispatch(getTaskStart());
     try {
+
         const res = await axios.get(`http://localhost:5500/api/users/${id}/items`, {
-            headers: {
-                token: `Bearer ${accessToken}`
-            }
+            headers: { token: `Bearer ${accessToken}` },
         });
         dispatch(getTaskSuccess(res.data));
+
     } catch (error) {
         dispatch(getTaskFailed());
     }
 }
 
-export const addTaskById = async (task, accessToken, dispatch, id) => {
+export const addTaskById = async (task, accessToken, dispatch, id, axiosJWT) => {
     dispatch(addTaskStart());
     try {
-        const res = await axios.post(`http://localhost:5500/api/users/${id}/items`, {
+        const res = await axiosJWT.post(`http://localhost:5500/api/users/${id}/items`, {
             task,
             headers: {
                 token: `Bearer ${accessToken}`
@@ -88,6 +89,19 @@ export const addTaskById = async (task, accessToken, dispatch, id) => {
         dispatch(addTaskSuccess(res.data));
     } catch (error) {
         dispatch(addTaskFailed());
+    }
+}
+export const deleteItem = async (accessToken, dispatch, id, userId) => {
+    dispatch(deleteTaskStart());
+    try {
+        const res = await axios.delete(`http://localhost:5500/api/users/${userId}/items/${id}`, {
+            headers: {
+                token: `Bearer ${accessToken}`
+            }
+        });
+        dispatch(deleteTaskSuccess(res.data));
+    } catch (error) {
+        dispatch(deleteTaskFailed());
     }
 }
 export const deleteAllItemsWithStatusTrue = async (accessToken, dispatch, id) => {
@@ -104,5 +118,20 @@ export const deleteAllItemsWithStatusTrue = async (accessToken, dispatch, id) =>
         dispatch(deleteTaskSuccess(res.data));
     } catch (error) {
         dispatch(deleteTaskFailed());
+    }
+}
+
+export const updateItem = async (accessToken, dispatch, id, userId, updateItemText) => {
+    dispatch(updateTaskStart());
+    try {
+        const res = await axios.put(`http://localhost:5500/api/users/${userId}/items/${id}`, {
+            headers: {
+                token: `Bearer ${accessToken}`
+            },
+            item: updateItemText 
+        });
+        dispatch(updateTaskSuccess(res.data));
+    } catch (error) {
+        dispatch(updateTaskFailed());
     }
 }

@@ -3,7 +3,10 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import jwt_decode from 'jwt-decode';
-import { getAllUser, getAllListById, deleteUser, addTaskById, deleteAllItemsWithStatusTrue } from '../../redux/apiRequest';
+import {
+    getAllUser, getAllListById, deleteUser,
+    addTaskById, deleteAllItemsWithStatusTrue, deleteItem, updateItem
+} from '../../redux/apiRequest';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginSuccess } from '../../redux/authSlice';
 
@@ -31,29 +34,26 @@ const HomePage = () => {
         }
         getAllListById(user?.accesstoken, dispatch, user?._id);
     }, [])
-
     const handleDelete = (id) => {
         deleteUser(user?.accessToken, dispatch, id);
     };
-
-    const refreshToken = async (token) => {
+    const refreshToken = async () => {
         try {
             const res = await axios.post('http://localhost:5500/api/users/refresh', {
-                token: token
+                withCredentials: true,
+                Token: user?.accessToken
             });
             return res.data;
         } catch (error) {
             console.log('lỗi ở 45');
         }
     }
-
     axiosJWT.interceptors.request.use(
         async (config) => {
             let date = new Date();
-            console.log(user?.accesstoken)
             const decodedToken = jwt_decode(user?.accesstoken);
             if (decodedToken.exp < date.getTime() / 1000) {
-                const data = await refreshToken(user?.refreshToken);
+                const data = await refreshToken();
                 const refreshUser = {
                     ...user,
                     accesstoken: data.accesstoken,
@@ -68,24 +68,12 @@ const HomePage = () => {
             return Promise.reject('lỗi dòng 65');
         }
     );
-
-    // const getItemList = async () => {
-    //     try {
-    //         const res = await axios.get(`http://localhost:5500/api/users/${userData._id}/items`)
-    //         setListItems(res.data);
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
-    // getItemList();
     //update function
-    const updateItem = async (e) => {
-        e.preventDefault()
+    const handleUpdateItem = async (e, id) => {
+        e.preventDefault();
         try {
+            updateItem(user?.accesstoken, dispatch, id, user?._id, updateItemText);
             const res = await axios.put(`http://localhost:5500/api/item/${isUpdating}`, { item: updateItemText })
-            console.log(res.data)
-            const updatedItemIndex = listItems.findIndex(item => item._id === isUpdating);
-            const updatedItem = listItems[updatedItemIndex].item = updateItemText;
             setUpdateItemText('');
             setIsUpdating('');
         } catch (err) {
@@ -97,7 +85,7 @@ const HomePage = () => {
         e.preventDefault();
         try {
             const Task = { user: user?._id, item: itemText, itemStatus: false };
-            addTaskById(Task, user?.accesstoken, dispatch, user?._id)
+            addTaskById(Task, user?.accesstoken, dispatch, user?._id, axiosJWT)
             getAllListById(user?.accesstoken, dispatch, user?._id);
             setItemText('');
             setItemUser('');
@@ -105,7 +93,6 @@ const HomePage = () => {
             console.log(error);
         }
     }
-
     const handleItemStatusChange = async (itemId, newStatus) => {
         try {
             const res = await axios.put(`http://localhost:5500/api/item/${itemId}`, { itemStatus: newStatus });
@@ -129,28 +116,23 @@ const HomePage = () => {
             getAllListById(user?.accesstoken, dispatch, user?._id);
         } catch (error) {
             console.log(error);
-            console.log("loi 122");
         }
     };
-
     //delete item when click delete button
-    const deleteItem = async (id, userId) => {
+    const handleDeleteItem = async (id, userId) => {
         try {
-            await axios.delete(`http://localhost:5500/api/item/${id}`, {
-                id: userId
-            });
+            deleteItem(user?.accesstoken, dispatch, id, userId);
+            // Cập nhật danh sách mục
             getAllListById(user?.accesstoken, dispatch, user?._id);
         } catch (error) {
             console.log(error);
         }
-    }
 
-
-
+    };
     //update item when click update button
     //Render update form
-    const renderUpdateForm = () => (
-        <form className="update-form" onSubmit={(e) => { updateItem(e) }} >
+    const renderUpdateForm = (item) => (
+        <form className="update-form" onSubmit={(e) => { handleUpdateItem(e, item._id) }} >
             <input className="update-new-input" type="text" placeholder="New Item" onChange={e => { setUpdateItemText(e.target.value) }} value={updateItemText} />
             <button className="update-new-btn" type="submit">Update</button>
         </form>
@@ -168,8 +150,6 @@ const HomePage = () => {
                     taskList?.map(item => (
                         <div className="todo-item">
                             {
-                                // <><p className="item-Content">{item.username}</p>
-                                //     <button className="deleteItem" onClick={() => { handleDelete(item._id); }}>Delete</button></>
                                 isUpdating === item._id
                                     ? renderUpdateForm(item)
                                     : <>
@@ -179,8 +159,7 @@ const HomePage = () => {
                                             checked={item.itemStatus}
                                             onChange={() => handleItemStatusChange(item._id, !item.itemStatus)}
                                         />
-                                        <button className="updateItem" onClick={() => { setIsUpdating(item._id) }}>Update</button>
-                                        <button className="deleteItem" onClick={() => { deleteItem(item._id, user?._id) }}>Delete</button>
+                                        <button className="deleteItem" onClick={() => { handleDeleteItem(item._id, item.user) }}>Delete</button>
                                     </>
                             }
                         </div>

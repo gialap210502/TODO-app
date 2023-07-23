@@ -1,4 +1,3 @@
-
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const jwt = require("jsonwebtoken");
@@ -25,16 +24,18 @@ const authcontroller = {
     generateAccessToken: (user) => {
         return jwt.sign(
             {
-                id: user.id
+                id: user.id,
+                name: user.username
             },
             process.env.secretkey,
-            { expiresIn: "3s" }
+            { expiresIn: "7s" }
         );
     },
     generateRefreshToken: (user) => {
         return jwt.sign(
             {
-                id: user.id
+                id: user.id,
+                name: user.username
             },
             process.env.secretkeyrefresh,
             { expiresIn: "500s" }
@@ -64,6 +65,13 @@ const authcontroller = {
                 const accesstoken = authcontroller.generateAccessToken(user);
                 const refreshToken = authcontroller.generateRefreshToken(user);
                 refreshTokens.push(refreshToken);
+                //STORE REFRESH TOKEN IN COOKIE
+                res.cookie("refreshToken", refreshToken, {
+                    httpOnly: true,
+                    secure: false,
+                    path: "/",
+                    sameSite: "strict",
+                });
                 const { password, ...others } = user._doc;
 
                 res.status(200).json({ ...others, accesstoken, refreshToken });
@@ -79,7 +87,7 @@ const authcontroller = {
     requestRefreshToken: async (req, res) => {
         //Take refresh token from user
         const refreshToken = req.body.refreshToken;
-        console.log(refreshToken);
+        console.log(req.body);
         //Send error if token is not valid
         if (!refreshToken) return res.status(401).json("You're not authenticated");
         if (!refreshTokens.includes(refreshToken)) {
@@ -94,6 +102,12 @@ const authcontroller = {
             const newAccessToken = authcontroller.generateAccessToken(user);
             const newRefreshToken = authcontroller.generateRefreshToken(user);
             refreshTokens.push(newRefreshToken);
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure:false,
+                path: "/",
+                sameSite: "strict",
+              });
             res.status(200).json({
                 accesstoken: newAccessToken,
                 refreshToken: newRefreshToken,

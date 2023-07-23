@@ -46,6 +46,19 @@ const listcontroller = {
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
+    },
+
+    updateItem:  async (req, res) => {
+        try {
+            const item = await todoItemsModel.findById(req.params.itemId);
+            // Cập nhật thông tin của mục
+            item.item = req.body.item || item.item;
+            item.itemStatus = req.body.itemStatus || item.itemStatus;
+            const updatedItem = await item.save();
+            res.status(200).json(updatedItem);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
     }
 }
 

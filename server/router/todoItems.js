@@ -28,10 +28,10 @@ router.put('/api/item/:id', async (req, res) => {
 })
 
 //Delete Items
-router.delete('/api/item/:id',midlewareVerify.verifyTokenAndUserAuthorization,  async (req, res) => {
+router.delete('/api/users/:userId/items/:itemId',midlewareVerify.verifyTokenAndUserAuthorization,  async (req, res) => {
     try {
         //find by id
-        const updateItem = await todoItemsModel.findByIdAndDelete(req.params.id, { $set: req.body });
+        const updateItem = await todoItemsModel.findByIdAndDelete(req.params.itemId, { $set: req.body });
         res.status(200).json("Item deleted")
     } catch (error) {
         res.json(error);
@@ -48,6 +48,7 @@ router.delete('/api/items', async (req, res) => {
         res.json(error);
     }
 });
+router.put('/api/users/:userId/items/:itemId', listController.updateItem);
 
 
 //export router
