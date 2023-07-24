@@ -65,13 +65,6 @@ const authcontroller = {
                 const accesstoken = authcontroller.generateAccessToken(user);
                 const refreshToken = authcontroller.generateRefreshToken(user);
                 refreshTokens.push(refreshToken);
-                //STORE REFRESH TOKEN IN COOKIE
-                res.cookie("refreshToken", refreshToken, {
-                    httpOnly: true,
-                    secure: false,
-                    path: "/",
-                    sameSite: "strict",
-                });
                 const { password, ...others } = user._doc;
 
                 res.status(200).json({ ...others, accesstoken, refreshToken });
@@ -86,11 +79,12 @@ const authcontroller = {
     },
     requestRefreshToken: async (req, res) => {
         //Take refresh token from user
-        const refreshToken = req.body.refreshToken;
-        console.log(req.body);
+        const refreshToken = req.body.token;
+        // console.log(req.body);
         //Send error if token is not valid
         if (!refreshToken) return res.status(401).json("You're not authenticated");
-        if (!refreshTokens.includes(refreshToken)) {
+        console.log(refreshTokens + ' TH1');
+        if (!refreshToken.includes(refreshToken)) {// rf === rfs : true => false
             return res.status(403).json("Refresh token is not valid");
         }
         jwt.verify(refreshToken, process.env.secretkeyrefresh, (err, user) => {
@@ -102,12 +96,7 @@ const authcontroller = {
             const newAccessToken = authcontroller.generateAccessToken(user);
             const newRefreshToken = authcontroller.generateRefreshToken(user);
             refreshTokens.push(newRefreshToken);
-            res.cookie("refreshToken", refreshToken, {
-                httpOnly: true,
-                secure:false,
-                path: "/",
-                sameSite: "strict",
-              });
+            
             res.status(200).json({
                 accesstoken: newAccessToken,
                 refreshToken: newRefreshToken,

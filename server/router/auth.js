@@ -12,7 +12,7 @@ router.post('/api/users/refresh', authController.requestRefreshToken);
 // READ: Get all task
 router.get('/api/users', authController.getAllUsers);
 //logout
-router.post('/api/users/logout', authController.logOut);
+router.post('/api/users/logout', verifyToken.verifyToken, authController.logOut);
 // UPDATE: Update a specific user by ID
 router.put('/api/users/:id', async (req, res) => {
     try {

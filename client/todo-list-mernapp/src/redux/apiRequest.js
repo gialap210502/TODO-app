@@ -2,6 +2,7 @@ import axios from "axios";
 import {
     loginStart, loginFailed, loginSuccess,
     registerStart, registerSuccess, registerFailed,
+    logOutStart, logOutSuccess, logOutFailed
 } from "./authSlice";
 import {
     getUserStart, getUserFailed, getUserSuccess,
@@ -62,11 +63,10 @@ export const deleteUser = async (accessToken, dispatch, id) => {
         dispatch(deleteUserFailed(error.response.data));
     }
 }
-export const getAllListById = async (accessToken, dispatch, id) => {
+export const getAllListById = async (accessToken, dispatch, id, axiosJWT) => {
     dispatch(getTaskStart());
     try {
-
-        const res = await axios.get(`http://localhost:5500/api/users/${id}/items`, {
+        const res = await axiosJWT.get(`http://localhost:5500/api/users/${id}/items`, {
             headers: { token: `Bearer ${accessToken}` },
         });
         dispatch(getTaskSuccess(res.data));
@@ -91,10 +91,10 @@ export const addTaskById = async (task, accessToken, dispatch, id, axiosJWT) => 
         dispatch(addTaskFailed());
     }
 }
-export const deleteItem = async (accessToken, dispatch, id, userId) => {
+export const deleteItem = async (accessToken, dispatch, id, userId, axiosJWT) => {
     dispatch(deleteTaskStart());
     try {
-        const res = await axios.delete(`http://localhost:5500/api/users/${userId}/items/${id}`, {
+        const res = await axiosJWT.delete(`http://localhost:5500/api/users/${userId}/items/${id}`, {
             headers: {
                 token: `Bearer ${accessToken}`
             }
@@ -104,10 +104,10 @@ export const deleteItem = async (accessToken, dispatch, id, userId) => {
         dispatch(deleteTaskFailed());
     }
 }
-export const deleteAllItemsWithStatusTrue = async (accessToken, dispatch, id) => {
+export const deleteAllItemsWithStatusTrue = async (accessToken, dispatch, id, axiosJWT) => {
     dispatch(deleteTaskStart());
     try {
-        const res = await axios.delete(`http://localhost:5500/api/users/${id}/items`, {
+        const res = await axiosJWT.delete(`http://localhost:5500/api/users/${id}/items`, {
             headers: {
                 token: `Bearer ${accessToken}`
             },
@@ -133,5 +133,20 @@ export const updateItem = async (accessToken, dispatch, id, userId, updateItemTe
         dispatch(updateTaskSuccess(res.data));
     } catch (error) {
         dispatch(updateTaskFailed());
+    }
+}
+
+export const logOut = async (dispatch, id, navigate, accessToken, axiosJWT) => {
+    dispatch(logOutStart());
+    try{
+        await axiosJWT.post(`http://localhost:5500/api/users/logout`, id,{
+            headers: {
+                token: `Bearer ${accessToken}`
+            },
+        });
+        dispatch(logOutSuccess());
+        navigate("/")
+    }catch(err){
+        dispatch(logOutFailed());
     }
 }

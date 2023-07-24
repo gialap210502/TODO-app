@@ -9,9 +9,10 @@ import {
 } from '../../redux/apiRequest';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginSuccess } from '../../redux/authSlice';
-
+import { createAxios } from '../../creatInstance';
 
 const HomePage = () => {
+    const user = useSelector((state) => state.auth.login?.currentUser);
     const [listItems, setListItems] = useState([]);
     const [itemText, setItemText] = useState('');
     const [itemUser, setItemUser] = useState('');
@@ -20,54 +21,18 @@ const HomePage = () => {
     const [updateItemText, setUpdateItemText] = useState('');
     const [userData, setUserData] = useState([]);
 
-    const user = useSelector((state) => state.auth.login?.currentUser);
     // const userList = useSelector((state) => state.users.users?.allUsers);
-    const taskList = useSelector((state) => state.tasks.tasks?.allTasks)
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    let taskList = useSelector((state) => state.tasks.tasks?.allTasks)
 
-    let axiosJWT = axios.create();
+    let axiosJWT = createAxios(user, dispatch, loginSuccess);
 
-    useEffect(() => {
-        if (!user) {
-            navigate("/");
-        }
-        getAllListById(user?.accesstoken, dispatch, user?._id);
-    }, [])
+
     const handleDelete = (id) => {
         deleteUser(user?.accessToken, dispatch, id);
     };
-    const refreshToken = async () => {
-        try {
-            const res = await axios.post('http://localhost:5500/api/users/refresh', {
-                withCredentials: true,
-                Token: user?.accessToken
-            });
-            return res.data;
-        } catch (error) {
-            console.log('lỗi ở 45');
-        }
-    }
-    axiosJWT.interceptors.request.use(
-        async (config) => {
-            let date = new Date();
-            const decodedToken = jwt_decode(user?.accesstoken);
-            if (decodedToken.exp < date.getTime() / 1000) {
-                const data = await refreshToken();
-                const refreshUser = {
-                    ...user,
-                    accesstoken: data.accesstoken,
-                    refreshToken: data.refreshToken
-                };
-                dispatch(loginSuccess(refreshUser));
-                config.headers["token"] = "Bearer " + data.accesstoken;
-            }
-            return config;
-        },
-        (err) => {
-            return Promise.reject('lỗi dòng 65');
-        }
-    );
+
     //update function
     const handleUpdateItem = async (e, id) => {
         e.preventDefault();
@@ -85,10 +50,11 @@ const HomePage = () => {
         e.preventDefault();
         try {
             const Task = { user: user?._id, item: itemText, itemStatus: false };
-            addTaskById(Task, user?.accesstoken, dispatch, user?._id, axiosJWT)
-            getAllListById(user?.accesstoken, dispatch, user?._id);
+            await addTaskById(Task, user?.accesstoken, dispatch, user?._id, axiosJWT);
+            console.log('Lấy add task');
+            await getAllListById(user?.accesstoken, dispatch, user?._id, axiosJWT);
+            console.log('Lấy All task');
             setItemText('');
-            setItemUser('');
         } catch (error) {
             console.log(error);
         }
@@ -103,7 +69,7 @@ const HomePage = () => {
                 }
                 return item;
             });
-            getAllListById(user?.accesstoken, dispatch, user?._id);
+            getAllListById(user?.accesstoken, dispatch, user?._id, axiosJWT);
         } catch (error) {
             console.log(error);
 
@@ -111,9 +77,9 @@ const HomePage = () => {
     };
     const deleteAllItemsWithStatus = async () => {
         try {
-            deleteAllItemsWithStatusTrue(user?.accesstoken, dispatch, user?._id);
+            deleteAllItemsWithStatusTrue(user?.accesstoken, dispatch, user?._id, axiosJWT);
             // Cập nhật danh sách mục
-            getAllListById(user?.accesstoken, dispatch, user?._id);
+            getAllListById(user?.accesstoken, dispatch, user?._id, axiosJWT);
         } catch (error) {
             console.log(error);
         }
@@ -121,9 +87,9 @@ const HomePage = () => {
     //delete item when click delete button
     const handleDeleteItem = async (id, userId) => {
         try {
-            deleteItem(user?.accesstoken, dispatch, id, userId);
+            await deleteItem(user?.accesstoken, dispatch, id, userId, axiosJWT);
             // Cập nhật danh sách mục
-            getAllListById(user?.accesstoken, dispatch, user?._id);
+            await getAllListById(user?.accesstoken, dispatch, user?._id, axiosJWT);
         } catch (error) {
             console.log(error);
         }
@@ -137,6 +103,12 @@ const HomePage = () => {
             <button className="update-new-btn" type="submit">Update</button>
         </form>
     )
+    useEffect(() => {
+        if (!user) {
+            navigate("/");
+        }
+        getAllListById(user?.accesstoken, dispatch, user?._id, axiosJWT);
+    }, [])
     return (
         <div className="App">
             <h1>To Do List</h1>

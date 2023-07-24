@@ -1,13 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import "./NavBar.css";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logOut } from "../../redux/apiRequest";
+import { createAxios } from '../../creatInstance';
+import { logOutSuccess } from '../../redux/authSlice';
 const NavBar = () => {
     const user = useSelector((state) => state.auth.login.currentUser);
-    const handleLogout = async () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const accessToken = user?.accessToken;
+    const id = user?._id;
+    let axiosJWT = createAxios(user, dispatch, logOutSuccess);
+    const handleLogout = () => {
         try {
-            await axios.post(`http://localhost:5500/api/users/logout`)
+            logOut(dispatch, id, navigate, accessToken, axiosJWT);
         } catch (error) {
             console.log(error);
         }

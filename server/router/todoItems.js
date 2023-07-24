@@ -12,7 +12,7 @@ const midlewareVerify = require('../controller/verifyToken');
 router.get('/api/users/:userId/items', listController.GetAllTodo);
 
 // CREATE: Create a new item for a specific user
-router.post('/api/users/:userId/items', listController.createTask);
+router.post('/api/users/:userId/items',midlewareVerify.verifyTokenAndUserAuthorization, listController.createTask);
 
 router.delete('/api/users/:userId/items', listController.deleteAllItemsWithItemStatusTrue)
 
@@ -38,16 +38,16 @@ router.delete('/api/users/:userId/items/:itemId',midlewareVerify.verifyTokenAndU
     }
 })
 
-// Delete All Items with itemStatus true
-router.delete('/api/items', async (req, res) => {
-    try {
-        const filter = { itemStatus: true };
-        const deleteResult = await todoItemsModel.deleteMany(filter);
-        res.status(200).json("All items with itemStatus true deleted");
-    } catch (error) {
-        res.json(error);
-    }
-});
+// // Delete All Items with itemStatus true
+// router.delete('/api/items', async (req, res) => {
+//     try {
+//         const filter = { itemStatus: true };
+//         const deleteResult = await todoItemsModel.deleteMany(filter);
+//         res.status(200).json("All items with itemStatus true deleted");
+//     } catch (error) {
+//         res.json(error);
+//     }
+// });
 router.put('/api/users/:userId/items/:itemId', listController.updateItem);
 
 
