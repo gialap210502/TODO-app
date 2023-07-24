@@ -2,7 +2,7 @@ import '../../App.css';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import jwt_decode from 'jwt-decode';
+// import jwt_decode from 'jwt-decode';
 import {
     getAllUser, getAllListById, deleteUser,
     addTaskById, deleteAllItemsWithStatusTrue, deleteItem, updateItem
@@ -61,7 +61,7 @@ const HomePage = () => {
     }
     const handleItemStatusChange = async (itemId, newStatus) => {
         try {
-            const res = await axios.put(`http://localhost:5500/api/item/${itemId}`, { itemStatus: newStatus });
+            const res = await axios.put(`http://15.235.202.44:5500/api/item/${itemId}`, { itemStatus: newStatus });
             // Cập nhật danh sách mục
             const updatedListItems = listItems.map(item => {
                 if (item._id === itemId) {

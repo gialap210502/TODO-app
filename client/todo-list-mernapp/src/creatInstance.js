@@ -3,7 +3,7 @@ import jwt_decode from "jwt-decode";
 
 const refreshToken = async (token) => {
     try {
-        const res = await axios.post("http://localhost:5500/api/users/refresh", {
+        const res = await axios.post("http://15.235.202.44:5500/api/users/refresh", {
             token,
         });
         return res.data;
