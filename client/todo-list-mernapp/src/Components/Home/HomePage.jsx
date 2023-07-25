@@ -61,7 +61,7 @@ const HomePage = () => {
     }
     const handleItemStatusChange = async (itemId, newStatus) => {
         try {
-            const res = await axios.put(`http://15.235.202.44:5500/api/item/${itemId}`, { itemStatus: newStatus });
+            const res = await axios.put(`https://lapduong.gcalls.vn/api/item/${itemId}`, { itemStatus: newStatus });
             // Cập nhật danh sách mục
             const updatedListItems = listItems.map(item => {
                 if (item._id === itemId) {

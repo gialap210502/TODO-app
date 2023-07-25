@@ -15,8 +15,7 @@ var _taskSlice = require("./taskSlice");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-_axios["default"].defaults.baseURL = 'http://15.235.202.44:5500/';
-
+// axios.defaults.baseURL = 'https://lapduong.gcalls.vn/';
 var loginUser = function loginUser(user, dispatch, navigate) {
   var res;
   return regeneratorRuntime.async(function loginUser$(_context) {
@@ -26,7 +25,7 @@ var loginUser = function loginUser(user, dispatch, navigate) {
           dispatch((0, _authSlice.loginStart)());
           _context.prev = 1;
           _context.next = 4;
-          return regeneratorRuntime.awrap(_axios["default"].post('http://15.235.202.44:5500/api/users/login', user, {
+          return regeneratorRuntime.awrap(_axios["default"].post('https://lapduong.gcalls.vn/api/users/login', user, {
             withCredentials: true
           }));
 
@@ -61,7 +60,7 @@ var registerUser = function registerUser(user, dispatch, navigate) {
           dispatch((0, _authSlice.registerStart)());
           _context2.prev = 1;
           _context2.next = 4;
-          return regeneratorRuntime.awrap(_axios["default"].post('http://15.235.202.44:5500/api/users/register', user));
+          return regeneratorRuntime.awrap(_axios["default"].post('https://lapduong.gcalls.vn/api/users/register', user));
 
         case 4:
           res = _context2.sent;
@@ -94,7 +93,7 @@ var getAllUser = function getAllUser(accessToken, dispatch) {
           dispatch((0, _userSlice.getUserStart)());
           _context3.prev = 1;
           _context3.next = 4;
-          return regeneratorRuntime.awrap(_axios["default"].get('http://15.235.202.44:5500/api/users', {
+          return regeneratorRuntime.awrap(_axios["default"].get('https://lapduong.gcalls.vn/api/users', {
             headers: {
               token: "Bearer ".concat(accessToken)
             }
@@ -132,7 +131,7 @@ var deleteUser = function deleteUser(accessToken, dispatch, id) {
           dispatch((0, _userSlice.deleteUserStart)());
           _context4.prev = 1;
           _context4.next = 4;
-          return regeneratorRuntime.awrap(_axios["default"]["delete"]('http://15.235.202.44:5500/api/users/' + id, {
+          return regeneratorRuntime.awrap(_axios["default"]["delete"]('https://lapduong.gcalls.vn/api/users/' + id, {
             headers: {
               token: "Bearer  + ".concat(accessToken)
             }
@@ -168,7 +167,7 @@ var getAllListById = function getAllListById(accessToken, dispatch, id, axiosJWT
           dispatch((0, _taskSlice.getTaskStart)());
           _context5.prev = 1;
           _context5.next = 4;
-          return regeneratorRuntime.awrap(axiosJWT.get("http://15.235.202.44:5500/api/users/".concat(id, "/items"), {
+          return regeneratorRuntime.awrap(axiosJWT.get("https://lapduong.gcalls.vn/api/users/".concat(id, "/items"), {
             headers: {
               token: "Bearer ".concat(accessToken)
             }
@@ -204,7 +203,7 @@ var addTaskById = function addTaskById(task, accessToken, dispatch, id, axiosJWT
           dispatch((0, _taskSlice.addTaskStart)());
           _context6.prev = 1;
           _context6.next = 4;
-          return regeneratorRuntime.awrap(axiosJWT.post("http://15.235.202.44:5500/api/users/".concat(id, "/items"), {
+          return regeneratorRuntime.awrap(axiosJWT.post("https://lapduong.gcalls.vn/api/users/".concat(id, "/items"), {
             task: task,
             headers: {
               token: "Bearer ".concat(accessToken)
@@ -241,7 +240,7 @@ var deleteItem = function deleteItem(accessToken, dispatch, id, userId, axiosJWT
           dispatch((0, _taskSlice.deleteTaskStart)());
           _context7.prev = 1;
           _context7.next = 4;
-          return regeneratorRuntime.awrap(axiosJWT["delete"]("http://15.235.202.44:5500/api/users/".concat(userId, "/items/").concat(id), {
+          return regeneratorRuntime.awrap(axiosJWT["delete"]("https://lapduong.gcalls.vn/api/users/".concat(userId, "/items/").concat(id), {
             headers: {
               token: "Bearer ".concat(accessToken)
             }
@@ -277,7 +276,7 @@ var deleteAllItemsWithStatusTrue = function deleteAllItemsWithStatusTrue(accessT
           dispatch((0, _taskSlice.deleteTaskStart)());
           _context8.prev = 1;
           _context8.next = 4;
-          return regeneratorRuntime.awrap(axiosJWT["delete"]("http://15.235.202.44:5500/api/users/".concat(id, "/items"), {
+          return regeneratorRuntime.awrap(axiosJWT["delete"]("https://lapduong.gcalls.vn/api/users/".concat(id, "/items"), {
             headers: {
               token: "Bearer ".concat(accessToken)
             },
@@ -316,7 +315,7 @@ var updateItem = function updateItem(accessToken, dispatch, id, userId, updateIt
           dispatch((0, _taskSlice.updateTaskStart)());
           _context9.prev = 1;
           _context9.next = 4;
-          return regeneratorRuntime.awrap(_axios["default"].put("http://15.235.202.44:5500/api/users/".concat(userId, "/items/").concat(id), {
+          return regeneratorRuntime.awrap(_axios["default"].put("https://lapduong.gcalls.vn/api/users/".concat(userId, "/items/").concat(id), {
             headers: {
               token: "Bearer ".concat(accessToken)
             },
@@ -352,7 +351,7 @@ var logOut = function logOut(dispatch, id, navigate, accessToken, axiosJWT) {
           dispatch((0, _authSlice.logOutStart)());
           _context10.prev = 1;
           _context10.next = 4;
-          return regeneratorRuntime.awrap(axiosJWT.post("http://15.235.202.44:5500/api/users/logout", id, {
+          return regeneratorRuntime.awrap(axiosJWT.post("https://lapduong.gcalls.vn/api/users/logout", id, {
             headers: {
               token: "Bearer ".concat(accessToken)
             }

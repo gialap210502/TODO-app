@@ -14,12 +14,12 @@ import {
     addTaskStart, addTaskFailed, addTaskSuccess,
     updateTaskStart, updateTaskFailed, updateTaskSuccess
 } from "./taskSlice";
-axios.defaults.baseURL = 'http://15.235.202.44:5500/';
+// axios.defaults.baseURL = 'https://lapduong.gcalls.vn/';
 
 export const loginUser = async (user, dispatch, navigate) => {
     dispatch(loginStart());
     try {
-        const res = await axios.post('http://15.235.202.44:5500/api/users/login', user, { withCredentials: true });
+        const res = await axios.post('https://lapduong.gcalls.vn/api/users/login', user, { withCredentials: true });
         dispatch(loginSuccess(res.data));
         navigate("/home");
     } catch (error) {
@@ -30,7 +30,7 @@ export const loginUser = async (user, dispatch, navigate) => {
 export const registerUser = async (user, dispatch, navigate) => {
     dispatch(registerStart());
     try {
-        const res = await axios.post('http://15.235.202.44:5500/api/users/register', user);
+        const res = await axios.post('https://lapduong.gcalls.vn/api/users/register', user);
         dispatch(registerSuccess());
         navigate("/");
     } catch (error) {
@@ -40,7 +40,7 @@ export const registerUser = async (user, dispatch, navigate) => {
 export const getAllUser = async (accessToken, dispatch) => {
     dispatch(getUserStart());
     try {
-        const res = await axios.get('http://15.235.202.44:5500/api/users', {
+        const res = await axios.get('https://lapduong.gcalls.vn/api/users', {
             headers: {
                 token: `Bearer ${accessToken}`
             }
@@ -54,7 +54,7 @@ export const getAllUser = async (accessToken, dispatch) => {
 export const deleteUser = async (accessToken, dispatch, id) => {
     dispatch(deleteUserStart());
     try {
-        const res = await axios.delete('http://15.235.202.44:5500/api/users/' + id, {
+        const res = await axios.delete('https://lapduong.gcalls.vn/api/users/' + id, {
             headers: {
                 token: `Bearer  + ${accessToken}`
             }
@@ -67,7 +67,7 @@ export const deleteUser = async (accessToken, dispatch, id) => {
 export const getAllListById = async (accessToken, dispatch, id, axiosJWT) => {
     dispatch(getTaskStart());
     try {
-        const res = await axiosJWT.get(`http://15.235.202.44:5500/api/users/${id}/items`, {
+        const res = await axiosJWT.get(`https://lapduong.gcalls.vn/api/users/${id}/items`, {
             headers: { token: `Bearer ${accessToken}` },
         });
         dispatch(getTaskSuccess(res.data));
@@ -80,7 +80,7 @@ export const getAllListById = async (accessToken, dispatch, id, axiosJWT) => {
 export const addTaskById = async (task, accessToken, dispatch, id, axiosJWT) => {
     dispatch(addTaskStart());
     try {
-        const res = await axiosJWT.post(`http://15.235.202.44:5500/api/users/${id}/items`, {
+        const res = await axiosJWT.post(`https://lapduong.gcalls.vn/api/users/${id}/items`, {
             task,
             headers: {
                 token: `Bearer ${accessToken}`
@@ -95,7 +95,7 @@ export const addTaskById = async (task, accessToken, dispatch, id, axiosJWT) => 
 export const deleteItem = async (accessToken, dispatch, id, userId, axiosJWT) => {
     dispatch(deleteTaskStart());
     try {
-        const res = await axiosJWT.delete(`http://15.235.202.44:5500/api/users/${userId}/items/${id}`, {
+        const res = await axiosJWT.delete(`https://lapduong.gcalls.vn/api/users/${userId}/items/${id}`, {
             headers: {
                 token: `Bearer ${accessToken}`
             }
@@ -108,7 +108,7 @@ export const deleteItem = async (accessToken, dispatch, id, userId, axiosJWT) =>
 export const deleteAllItemsWithStatusTrue = async (accessToken, dispatch, id, axiosJWT) => {
     dispatch(deleteTaskStart());
     try {
-        const res = await axiosJWT.delete(`http://15.235.202.44:5500/api/users/${id}/items`, {
+        const res = await axiosJWT.delete(`https://lapduong.gcalls.vn/api/users/${id}/items`, {
             headers: {
                 token: `Bearer ${accessToken}`
             },
@@ -125,7 +125,7 @@ export const deleteAllItemsWithStatusTrue = async (accessToken, dispatch, id, ax
 export const updateItem = async (accessToken, dispatch, id, userId, updateItemText) => {
     dispatch(updateTaskStart());
     try {
-        const res = await axios.put(`http://15.235.202.44:5500/api/users/${userId}/items/${id}`, {
+        const res = await axios.put(`https://lapduong.gcalls.vn/api/users/${userId}/items/${id}`, {
             headers: {
                 token: `Bearer ${accessToken}`
             },
@@ -140,7 +140,7 @@ export const updateItem = async (accessToken, dispatch, id, userId, updateItemTe
 export const logOut = async (dispatch, id, navigate, accessToken, axiosJWT) => {
     dispatch(logOutStart());
     try {
-        await axiosJWT.post(`http://15.235.202.44:5500/api/users/logout`, id, {
+        await axiosJWT.post(`https://lapduong.gcalls.vn/api/users/logout`, id, {
             headers: {
                 token: `Bearer ${accessToken}`
             },
